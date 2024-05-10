@@ -1,3 +1,4 @@
+
 package gemmini
 
 import org.chipsalliance.cde.config.{Config, Parameters}
@@ -49,8 +50,51 @@ object GemminiCustomConfigs {
     acc_capacity = CapacityInKilobytes(128),
   )
 
+  val dseInferenceConfig = baselineInferenceConfig.copy(
+    // ************ TODO: Start code region here ************
+    // Change these params 
+    // Data types
+    inputType = SInt(8.W),
+    accType = SInt(32.W),
+    spatialArrayOutputType = SInt(20.W),
+
+    // Spatial array PE options
+    tileRows = 1,
+    tileColumns = 1,
+    meshRows = 16,
+    meshColumns = 16,
+
+    // Dataflow
+    dataflow = Dataflow.BOTH, // OS, WS, BOTH
+
+    // Scratchpad and accumulator
+    sp_capacity = CapacityInKilobytes(256),
+    acc_capacity = CapacityInKilobytes(64),
+    sp_banks = 4,
+    acc_banks = 2,
+
+    // Reservation station entries
+    reservation_station_entries_ld = 8,
+    reservation_station_entries_st = 4,
+    reservation_station_entries_ex = 16,
+
+    // Ld/Ex/St instruction queue lengths
+    ld_queue_length = 8,
+    st_queue_length = 2,
+    ex_queue_length = 8,
+
+    // DMA options
+    max_in_flight_mem_reqs = 16,
+    dma_maxbytes = 64,
+    dma_buswidth = 128,
+
+    // TLB options
+    tlb_size = 4,
+    // ************ TODO: End code region here ************
+  )
+
   // Specify which of your custom configs you want to build here
-  val customConfig = baselineInferenceConfig
+  val customConfig = dseInferenceConfig
 }
 
 

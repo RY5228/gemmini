@@ -6,6 +6,7 @@ package gemmini
 import chisel3._
 import chisel3.util._
 import hardfloat._
+import gemmini.MacOperations
 
 // Bundles that represent the raw bits of custom datatypes
 case class Float(expWidth: Int, sigWidth: Int) extends Bundle {
@@ -90,7 +91,8 @@ object Arithmetic {
   implicit object SIntArithmetic extends Arithmetic[SInt] {
     override implicit def cast(self: SInt) = new ArithmeticOps(self) {
       override def *(t: SInt) = self * t
-      override def mac(m1: SInt, m2: SInt) = m1 * m2 + self
+      // override def mac(m1: SInt, m2: SInt) = m1 * m2 + self
+      override def mac(m1: SInt, m2: SInt) = MacOperations.mac(m1, m2, self)
       override def +(t: SInt) = self + t
       override def -(t: SInt) = self - t
 
