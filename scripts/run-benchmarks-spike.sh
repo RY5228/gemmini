@@ -1,28 +1,39 @@
 #!/bin/bash
 
-benchmarks="mobilenet resnet50 transformer"
+benchmarks="imagenet/mobilenet"
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+suffix="-baremetal"
+build_dir="${script_dir}/../software/gemmini-rocc-tests/build"
 
 help () {
     echo "Run Gemmini benchmarks on Spike:"
     echo "  $benchmarks"
     echo
-    echo "Usage: $0 [-h|--help] [-d|--dry-run]"
+    echo "Usage: $0 [-h|--help] [-d|--dry-run] matmul_option"
     echo
     echo "Options:"
     echo " -h | --help  Show this help message"
     echo
     echo " -d | --dry-run  Print the commands that would be run, but don't run them"
+    echo
+    echo " matmul_option  The matmul option to use. This can be either 'os' or 'ws'."
     exit
 }
 
 show_help=0
 dry_run=0
+matmul_option=ws
 
 while [ $# -gt 0 ] ; do
   case $1 in
     -h | --help) show_help=1 ;;
     -d | --dry-run) dry_run=1 ;;
+    *)
+        matmul_option=$1
+        if [ "$matmul_option" != "os" ] && [ "$matmul_option" != "ws" ]; then
+            echo "Invalid matmul option: $matmul_option"
+            exit 1
+        fi
   esac
 
   shift
@@ -34,9 +45,15 @@ fi
 
 for benchmark in $benchmarks; do
     echo "Running $benchmark"
+    full_binary_path="${build_dir}/${benchmark}${suffix}"
+    if [ ! -f "${full_binary_path}" ]; then
+        echo "Binary not found: $full_binary_path"
+        exit 1
+    fi
+    cmd="spike --extension=gemmini $full_binary_path $matmul_option"
     if [ $dry_run -eq 1 ]; then
-        echo $script_dir/run-spike.sh $benchmark
+        echo $cmd
     else
-        $script_dir/run-spike.sh $benchmark
+        eval $cmd
     fi
 done
