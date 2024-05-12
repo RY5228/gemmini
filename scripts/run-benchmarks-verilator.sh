@@ -1,6 +1,6 @@
 #!/bin/bash
 
-benchmarks="imagenet/mobilenet"
+benchmarks="bareMetalC/tiled_matmul_gemmini"
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 suffix="-baremetal"
 build_dir="${script_dir}/../software/gemmini-rocc-tests/build"
@@ -44,13 +44,13 @@ if [ $show_help -eq 1 ]; then
 fi
 
 for benchmark in $benchmarks; do
-    echo "Running $benchmark"
-    full_binary_path="${build_dir}/${benchmark}${suffix}"
+    echo "Running $benchmark_${matmul_option}"
+    full_binary_path="${build_dir}/${benchmark}_${matmul_option}${suffix}"
     if [ ! -f "${full_binary_path}" ]; then
         echo "Binary not found: $full_binary_path"
         exit 1
     fi
-    cmd="${script_dir}/../../../sims/verilator/simulator-chipyard.harness-CustomGemminiSoCConfig $full_binary_path $matmul_option"
+    cmd="${script_dir}/../../../sims/verilator/simulator-chipyard.harness-CustomGemminiSoCConfig $full_binary_path"
     if [ $dry_run -eq 1 ]; then
         echo $cmd
     else
