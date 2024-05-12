@@ -44,7 +44,7 @@ if [ $show_help -eq 1 ]; then
 fi
 
 for benchmark in $benchmarks; do
-    echo "Running $benchmark_${matmul_option}"
+    echo "Running ${benchmark}_${matmul_option}"
     full_binary_path="${build_dir}/${benchmark}_${matmul_option}${suffix}"
     if [ ! -f "${full_binary_path}" ]; then
         echo "Binary not found: $full_binary_path"
