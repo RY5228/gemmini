@@ -46,7 +46,7 @@ if [ $show_help -eq 1 ]; then
     help
 fi
 
-VERILATOR_FLAG="+permissive +dramsim +dramsim_ini_dir=/home/vm/chipyard/generators/testchipip/src/main/resources/dramsim2_ini +max-cycles=10000000 +verbose +permissive-off"
+VERILATOR_FLAG="+permissive +dramsim +dramsim_ini_dir=/home/vm/chipyard/generators/testchipip/src/main/resources/dramsim2_ini +verbose +permissive-off"
 
 for benchmark in $benchmarks; do
     echo "Running ${benchmark}"

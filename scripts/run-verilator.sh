@@ -90,7 +90,7 @@ if [ ! -f "${full_binary_path}" ]; then
     exit 1
 fi
 
-VERILATOR_FLAG="+permissive +dramsim +dramsim_ini_dir=/home/vm/chipyard/generators/testchipip/src/main/resources/dramsim2_ini +max-cycles=10000000 +verbose +permissive-off"
+VERILATOR_FLAG="+permissive +dramsim +dramsim_ini_dir=/home/vm/chipyard/generators/testchipip/src/main/resources/dramsim2_ini +verbose +permissive-off"
 
 cd ../../sims/verilator/
 ./simulator-chipyard.harness-CustomGemminiSoCConfig${DEBUG} $VERILATOR_FLAG $PK ${full_binary_path} </dev/null 2> >(spike-dasm > ${output_dir}/${binary}${suffix}.out) | tee ${output_dir}/${binary}${suffix}.log
