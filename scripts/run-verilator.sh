@@ -65,7 +65,8 @@ else
 fi
 
 if [ $debug -eq 1 ]; then
-    DEBUG="-debug -v ${ROOT}${WAVEFORM}"
+    # DEBUG="-debug -v ${ROOT}${WAVEFORM}"
+    DEBUG="-debug"
 else
     DEBUG=""
 fi
@@ -88,5 +89,6 @@ if [ ! -f "${full_binary_path}" ]; then
 fi
 
 cd ../../sims/verilator/
-./simulator-chipyard.harness-CustomGemminiSoCConfig${DEBUG} $PK ${full_binary_path}
+make -j8 run-binary${DEBUG} CONFIG=CustomGemminiSoCConfig BINARY=${full_binary_path}
+# ./simulator-chipyard.harness-CustomGemminiSoCConfig${DEBUG} $PK ${full_binary_path}
 
