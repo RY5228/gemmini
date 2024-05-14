@@ -65,14 +65,16 @@ else
 fi
 
 if [ $debug -eq 1 ]; then
-    # DEBUG="-debug -v ${ROOT}${WAVEFORM}"
-    DEBUG="-debug"
+    DEBUG="-debug -v ${ROOT}${WAVEFORM}"
 else
     DEBUG=""
 fi
 
 path=""
 suffix=""
+script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+output_dir="${script_dir}/../output"
+mkdir -p $output_dir
 
 for dir in bareMetalC mlps imagenet transformers ; do
     if [ -f "software/gemmini-rocc-tests/build/${dir}/${binary}$default_suffix" ]; then
@@ -88,7 +90,7 @@ if [ ! -f "${full_binary_path}" ]; then
     exit 1
 fi
 
-cd ../../sims/verilator/
-make -j8 run-binary${DEBUG} CONFIG=CustomGemminiSoCConfig BINARY=${full_binary_path}
-# ./simulator-chipyard.harness-CustomGemminiSoCConfig${DEBUG} $PK ${full_binary_path}
+VERILATOR_FLAG="+permissive +dramsim +dramsim_ini_dir=/home/vm/chipyard/generators/testchipip/src/main/resources/dramsim2_ini +max-cycles=10000000 +verbose +permissive-off"
 
+cd ../../sims/verilator/
+./simulator-chipyard.harness-CustomGemminiSoCConfig${DEBUG} $VERILATOR_FLAG $PK ${full_binary_path} </dev/null 2> >(spike-dasm > ${output_dir}/${binary}${suffix}.out) | tee ${output_dir}/${binary}${suffix}.log

@@ -4,6 +4,9 @@ benchmarks="mlps/mlp9"
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 suffix="-baremetal"
 build_dir="${script_dir}/../software/gemmini-rocc-tests/build"
+output_dir="${script_dir}/../output"
+
+mkdir -p $output_dir
 
 help () {
     echo "Run Gemmini benchmarks on Verilator:"
@@ -43,6 +46,8 @@ if [ $show_help -eq 1 ]; then
     help
 fi
 
+VERILATOR_FLAG="+permissive +dramsim +dramsim_ini_dir=/home/vm/chipyard/generators/testchipip/src/main/resources/dramsim2_ini +max-cycles=10000000 +verbose +permissive-off"
+
 for benchmark in $benchmarks; do
     echo "Running ${benchmark}"
     full_binary_path="${build_dir}/${benchmark}${suffix}"
@@ -50,7 +55,7 @@ for benchmark in $benchmarks; do
         echo "Binary not found: $full_binary_path"
         exit 1
     fi
-    cmd="${script_dir}/../../../sims/verilator/simulator-chipyard.harness-CustomGemminiSoCConfig $full_binary_path $matmul_option"
+    cmd="${script_dir}/../../../sims/verilator/simulator-chipyard.harness-CustomGemminiSoCConfig $VERILATOR_FLAG $full_binary_path $matmul_option </dev/null 2> >(spike-dasm > ${output_dir}/mlp9-baremetal.out) | tee ${output_dir}/mlp9-baremetal.log"
     if [ $dry_run -eq 1 ]; then
         echo $cmd
     else
